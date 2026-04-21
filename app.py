@@ -20,20 +20,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
-from flask_login import LoginManager, current_user
 
 
-print(app.url_map)
 
-login_manager = LoginManager()
-login_manager.login_view = 'login'
+
 load_dotenv()
 
 app = Flask(__name__)
-login_manager.init_app(app)  # add_context_processor=True por defecto
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'relatos-ia-2026-super-secreta')
 
-# Base de datos: PostgreSQL en Railway, SQLite localmente
 DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
     if DATABASE_URL.startswith('postgres://'):
@@ -43,13 +38,17 @@ else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///relatos.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['PERMANENT_SESSION_LIFETIME'] = 30 * 24 * 60 * 60  # 30 días
+app.config['PERMANENT_SESSION_LIFETIME'] = 30 * 24 * 60 * 60
 
 db = SQLAlchemy(app)
-login_manager = LoginManager(app)
+
+login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.login_message = 'Debes iniciar sesión para acceder a esta página.'
-
+login_manager.init_app(app)
+@app.context_processor
+def inject_user():
+    return dict(current_user=current_user)
 # ──────────────────────────────────────────────
 # MODELOS — Usuarios
 # ──────────────────────────────────────────────
@@ -89,9 +88,7 @@ class Usuario(UserMixin, db.Model):
         return f'<Usuario {self.email}: {self.nombre}>'
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return Usuario.query.get(int(user_id))
+
 
 
 # ──────────────────────────────────────────────
@@ -308,9 +305,6 @@ def requiere_acceso_relato(f):
 # ──────────────────────────────────────────────
 # RUTAS — Autenticación
 # ──────────────────────────────────────────────
-@app.context_processor
-def inject_user():
-    return dict(current_user=current_user)
 
 @app.route('/landing')
 def landing():
@@ -632,6 +626,10 @@ def admin_usuarios():
     
     usuarios = Usuario.query.all()
     return render_template('admin/usuarios.html', usuarios=usuarios)
+
+@app.context_processor
+def inject_user():
+    return dict(current_user=current_user)
 
 
 # ──────────────────────────────────────────────

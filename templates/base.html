@@ -53,20 +53,20 @@
 </head>
 <body>
   <nav>
-    <a class="nav-brand" href="{% if current_user is defined and current_user.is_authenticated %}{{ url_for('index') }}{% else %}{{ url_for('landing') }}{% endif %}">Relatos<span>IA</span></a>
-    <div class="nav-links">
-      {% if current_user is defined and current_user.is_authenticated %}
-        <a href="{{ url_for('index') }}">📖 Biblioteca IA</a>
-        <a href="{{ url_for('generar') }}">✨ Generar</a>
-        <a href="{{ url_for('humanos_index') }}">👥 Autores</a>
-        <span class="nav-user">👤 {{ current_user.nombre }}</span>
-        <a href="{{ url_for('logout') }}" class="btn btn-ghost btn-nav">Logout</a>
-      {% else %}
-        <a href="{{ url_for('login') }}" class="btn btn-primary btn-nav">Iniciar Sesión</a>
-        <a href="{{ url_for('registro') }}" class="btn btn-ghost btn-nav">Registrarse</a>
-      {% endif %}
-    </div>
-  </nav>
+  <a class="nav-brand" href="{% if current_user is defined and current_user.is_authenticated %}{{ url_for('index') }}{% else %}{{ url_for('landing') }}{% endif %}">Relatos<span>IA</span></a>
+  <div class="nav-links">
+    {% if current_user is defined and current_user.is_authenticated %}
+      <a href="{{ url_for('index') }}">📖 Biblioteca IA</a>
+      <a href="{{ url_for('generar') }}">✨ Generar</a>
+      <a href="{{ url_for('humanos_index') }}">👥 Autores</a>
+      <span class="nav-user">👤 {{ current_user.nombre }}</span>
+      <a href="{{ url_for('logout') }}" class="btn btn-ghost btn-nav">Logout</a>
+    {% else %}
+      <a href="{{ url_for('login') }}" class="btn btn-primary btn-nav">Iniciar Sesión</a>
+      <a href="{{ url_for('registro') }}" class="btn btn-ghost btn-nav">Registrarse</a>
+    {% endif %}
+  </div>
+</nav>
   <main>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% for cat, msg in messages %}
