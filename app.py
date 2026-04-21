@@ -43,7 +43,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.login_message = 'Debes iniciar sesión para acceder a esta página.'
 login_manager.init_app(app)
-# 👇 AÑADE ESTO AQUÍ
+
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.query.get(int(user_id))
@@ -485,20 +485,16 @@ def humanos_index():
     return render_template('humanos/index.html', relatos=relatos)
 
 
-@app.route('/humanos/nuevo', methods=['GET', 'POST'])
+
 @login_required
+@app.route('/humanos/nuevo', methods=['GET', 'POST'])
 def humanos_nuevo():
     """Crear nuevo relato humano (solo autores)."""
-    
-    @app.route('/humanos/nuevo', methods=['GET', 'POST'])
     def humanos_nuevo():
         if request.method == 'POST':
-
-            # 👇 AQUÍ VA EL BLOQUE
             if not current_user.is_authenticated:
                 flash("Debes iniciar sesión", "error")
                 return redirect(url_for("login"))
-
             titulo = request.form.get('titulo', '').strip()
             descripcion = request.form.get('descripcion', '').strip()
             precio = request.form.get('precio', '0.0').strip()
