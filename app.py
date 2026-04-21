@@ -20,7 +20,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
+from flask_login import LoginManager, current_user
 
+login_manager = LoginManager()
+login_manager.init_app(app)  # add_context_processor=True por defecto
+login_manager.login_view = 'login'
 load_dotenv()
 
 app = Flask(__name__)
@@ -333,7 +337,7 @@ def login():
         flash(f'¡Bienvenido, {usuario.nombre}!', 'success')
         
         next_page = request.args.get('next')
-        if not next_page or url_has_allowed_host_and_scheme(next_page):
+        if not next_page or not url_has_allowed_host_and_scheme(next_page, request.host):
             next_page = url_for('index')
         return redirect(next_page)
     
