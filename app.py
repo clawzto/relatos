@@ -21,8 +21,7 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
     # Railway o similar — PostgreSQL
     if DATABASE_URL.startswith('postgres://'):
-        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
-    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///relatos.db').replace('postgres://', 'postgresql://')
 else:
     # Local development — SQLite
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///relatos.db'
