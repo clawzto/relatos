@@ -53,9 +53,9 @@
 </head>
 <body>
   <nav>
-    <a class="nav-brand" href="{% if current_user.is_authenticated %}{{ url_for('index') }}{% else %}{{ url_for('landing') }}{% endif %}">Relatos<span>IA</span></a>
+    <a class="nav-brand" href="{% if current_user is defined and current_user.is_authenticated %}{{ url_for('index') }}{% else %}{{ url_for('landing') }}{% endif %}">Relatos<span>IA</span></a>
     <div class="nav-links">
-      {% if current_user.is_authenticated %}
+      {% if current_user is defined and current_user.is_authenticated %}
         <a href="{{ url_for('index') }}">📖 Biblioteca IA</a>
         <a href="{{ url_for('generar') }}">✨ Generar</a>
         <a href="{{ url_for('humanos_index') }}">👥 Autores</a>

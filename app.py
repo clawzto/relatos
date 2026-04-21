@@ -22,8 +22,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 from flask_login import LoginManager, current_user
 
-login_manager = LoginManager()
 
+
+
+login_manager = LoginManager()
 login_manager.login_view = 'login'
 load_dotenv()
 
@@ -306,6 +308,9 @@ def requiere_acceso_relato(f):
 # ──────────────────────────────────────────────
 # RUTAS — Autenticación
 # ──────────────────────────────────────────────
+@app.context_processor
+def inject_user():
+    return dict(current_user=current_user)
 
 @app.route('/landing')
 def landing():
