@@ -489,69 +489,80 @@ def humanos_index():
 @login_required
 def humanos_nuevo():
     """Crear nuevo relato humano (solo autores)."""
-    if request.method == 'POST':
-        titulo      = request.form.get('titulo', '').strip()
-        descripcion = request.form.get('descripcion', '').strip()
-        precio      = request.form.get('precio', '0.0').strip()
-        
-        if not titulo:
-            flash('El título es obligatorio.', 'error')
-            return redirect(url_for('humanos_nuevo'))
-        
-        try:
-            precio = float(precio)
-        except:
-            precio = 0.0
-        
-        relato = RelatoHumano(
-            titulo=titulo,
-            descripcion=descripcion,
-            precio=precio,
-            autor_id=current_user.id
-        )
-        db.session.add(relato)
-        db.session.commit()
-        flash('Relato creado. Ahora añade el primer capítulo.', 'success')
-        return redirect(url_for('humanos_ver', relato_id=relato.id))
     
-    return render_template('humanos/nuevo.html')
+    @app.route('/humanos/nuevo', methods=['GET', 'POST'])
+    def humanos_nuevo():
+        if request.method == 'POST':
+
+            # 👇 AQUÍ VA EL BLOQUE
+            if not current_user.is_authenticated:
+                flash("Debes iniciar sesión", "error")
+                return redirect(url_for("login"))
+
+            titulo = request.form.get('titulo', '').strip()
+            descripcion = request.form.get('descripcion', '').strip()
+            precio = request.form.get('precio', '0.0').strip()
+
+            if not titulo:
+                flash('El título es obligatorio.', 'error')
+                return redirect(url_for('humanos_nuevo'))
+
+            try:
+                precio = float(precio)
+            except:
+                precio = 0.0
+
+            relato = RelatoHumano(
+                titulo=titulo,
+                descripcion=descripcion,
+                precio=precio,
+                autor_id=current_user.id
+            )
+
+            db.session.add(relato)
+            db.session.commit()
+
+            flash('Relato creado. Ahora añade el primer capítulo.', 'success')
+            return redirect(url_for('humanos_ver', relato_id=relato.id))
+
+        return render_template('humanos/nuevo.html')
 
 
-@app.route('/humanos/<int:relato_id>')
-@login_required
-@requiere_acceso_relato
-def humanos_ver(relato_id):
-    """Ver relato humano (protegido)."""
-    relato = RelatoHumano.query.get_or_404(relato_id)
-    return render_template('humanos/ver.html', relato=relato)
+    @app.route('/humanos/<int:relato_id>')
+    @login_required
+    @requiere_acceso_relato
+    def humanos_ver(relato_id):
+        """Ver relato humano (protegido)."""
+        relato = RelatoHumano.query.get_or_404(relato_id)
+        return render_template('humanos/ver.html', relato=relato)
 
 
-@app.route('/humanos/<int:relato_id>/capitulo/nuevo', methods=['GET', 'POST'])
-@login_required
-def capitulo_nuevo(relato_id):
-    """Añadir capítulo (solo autor)."""
-    relato = RelatoHumano.query.get_or_404(relato_id)
-    
-    if relato.autor_id != current_user.id:
-        flash('No tienes permiso para editar este relato.', 'error')
-        return redirect(url_for('humanos_index'))
-    
-    if request.method == 'POST':
-        titulo    = request.form.get('titulo', '').strip()
-        contenido = request.form.get('contenido', '').strip()
+    @app.route('/humanos/<int:relato_id>/capitulo/nuevo', methods=['GET', 'POST'])
+    @login_required
+    def capitulo_nuevo(relato_id):
+        """Añadir capítulo (solo autor)."""
+        relato = RelatoHumano.query.get_or_404(relato_id)
         
-        if not titulo or not contenido:
-            flash('El título y el contenido son obligatorios.', 'error')
-            return redirect(url_for('capitulo_nuevo', relato_id=relato_id))
+        if relato.autor_id != current_user.id:
+            flash('No tienes permiso para editar este relato.', 'error')
+            return redirect(url_for('humanos_index'))
         
-        orden = len(relato.capitulos) + 1
-        cap = Capitulo(relato_id=relato_id, titulo=titulo, contenido=contenido, orden=orden)
-        db.session.add(cap)
-        db.session.commit()
-        flash(f'Capítulo {orden} añadido.', 'success')
-        return redirect(url_for('humanos_ver', relato_id=relato_id))
-    
-    return render_template('humanos/capitulo_nuevo.html', relato=relato)
+        if request.method == 'POST':
+            titulo    = request.form.get('titulo', '').strip()
+            contenido = request.form.get('contenido', '').strip()
+            
+            if not titulo or not contenido:
+                flash('El título y el contenido son obligatorios.', 'error')
+                return redirect(url_for('capitulo_nuevo', relato_id=relato_id))
+            
+            orden = len(relato.capitulos) + 1
+            cap = Capitulo(relato_id=relato_id, titulo=titulo, contenido=contenido, orden=orden)
+            db.session.add(cap)
+            db.session.commit()
+            flash(f'Capítulo {orden} añadido.', 'success')
+            return redirect(url_for('humanos_ver', relato_id=relato_id))
+        
+        return render_template('humanos/capitulo_nuevo.html', relato=relato)
 
 
 @app.route('/humanos/<int:relato_id>/capitulo/<int:cap_id>/editar', methods=['GET', 'POST'])
@@ -665,4 +676,7 @@ if __name__ == '__main__':
     debug = os.getenv('FLASK_DEBUG', 'False') == 'True'
     port = int(os.getenv('PORT', 5000))
     print(app.url_map)
+    print("USER:", current_user)
+    print("AUTH:", current_user.is_authenticated)
+    print("ID:", getattr(current_user, "id", None))
     app.run(debug=debug, host='0.0.0.0', port=port)
