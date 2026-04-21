@@ -23,7 +23,7 @@ from dotenv import load_dotenv
 from flask_login import LoginManager, current_user
 
 
-
+print(app.url_map)
 
 login_manager = LoginManager()
 login_manager.login_view = 'login'
