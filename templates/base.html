@@ -52,7 +52,7 @@
   {% block extra_css %}{% endblock %}
 </head>
 <body>
-  <nav>
+ <nav>
   <a class="nav-brand" href="{% if current_user is defined and current_user.is_authenticated %}{{ url_for('index') }}{% else %}{{ url_for('landing') }}{% endif %}">Relatos<span>IA</span></a>
   <div class="nav-links">
     {% if current_user is defined and current_user.is_authenticated %}
