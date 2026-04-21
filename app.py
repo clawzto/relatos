@@ -410,7 +410,7 @@ def generar():
         titulo    = request.form.get('titulo', '').strip()
         prompt    = request.form.get('prompt', '').strip()
         proveedor = request.form.get('proveedor') or 'openrouter'
-        if not OPENROUTER_KEY:
+        if not OPENROUTER_KEY:      
             proveedor = 'ollama'
         else:
             proveedor = 'openrouter'
@@ -661,5 +661,5 @@ with app.app_context():
 if __name__ == '__main__':
     debug = os.getenv('FLASK_DEBUG', 'False') == 'True'
     port = int(os.getenv('PORT', 5000))
-    app.run(debug=debug, host='0.0.0.0', port=port)
     print(app.url_map)
+    app.run(debug=debug, host='0.0.0.0', port=port)
