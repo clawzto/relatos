@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Nuevo relato humano{% endblock %}
+
+{% block extra_css %}
+<style>
+  .form-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; max-width: 600px; }
+  .actions { display: flex; gap: .75rem; margin-top: 1.75rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Nuevo relato</h1>
+<p class="subtitle">Crea el relato y luego añade los capítulos uno a uno.</p>
+
+<div class="form-card">
+  <form method="POST">
+    <div class="form-group">
+      <label for="titulo">Título</label>
+      <input type="text" name="titulo" id="titulo" placeholder="El nombre del relato…" required />
+    </div>
+    <div class="form-group">
+      <label for="descripcion">Descripción breve <span style="font-weight:400;text-transform:none">(opcional)</span></label>
+      <textarea name="descripcion" id="descripcion" rows="3" placeholder="Una frase que resuma de qué trata…"></textarea>
+    </div>
+    <div class="actions">
+      <button type="submit" class="btn btn-primary">Crear relato</button>
+      <a href="{{ url_for('humanos_index') }}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

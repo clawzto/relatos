@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}{{ relato.titulo }} — Relatos IA{% endblock %}
+
+{% block extra_css %}
+<style>
+  .relato-header { margin-bottom: 2.5rem; }
+  .relato-meta { display: flex; gap: 1rem; align-items: center; margin-top: .75rem; flex-wrap: wrap; }
+  .badge { display: inline-block; font-size: .7rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; padding: .2rem .6rem; border-radius: 3px; }
+  .badge-openrouter { background: #f0e8e0; color: #8b4a1e; }
+  .badge-ollama     { background: #e0ece8; color: #1e5a3a; }
+  .badge-openwebui  { background: #e0e8f0; color: #1e3a6a; }
+  .meta-text { font-size: .8rem; color: var(--muted); }
+  .divider { width: 40px; height: 2px; background: var(--accent); margin: 1.5rem 0 2rem; opacity: .5; }
+  .relato-body { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.08rem; line-height: 1.9; color: var(--ink); white-space: pre-wrap; max-width: 680px; }
+  .prompt-box { background: var(--cream); border-left: 3px solid var(--accent); padding: .85rem 1.1rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 2.5rem 0; }
+  .prompt-label { font-size: .72rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: .3rem; }
+  .prompt-text  { font-size: .9rem; color: var(--ink); line-height: 1.6; }
+  .actions { display: flex; gap: .75rem; margin-top: 3rem; align-items: center; flex-wrap: wrap; }
+  .confirm-delete { display: none; }
+  .confirm-delete.visible { display: inline-flex; align-items: center; gap: .5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('index') }}" class="btn btn-ghost" style="margin-bottom:1.5rem; padding:.4rem .9rem; font-size:.82rem;">← Biblioteca</a>
+
+<div class="relato-header">
+  <h1>{{ relato.titulo }}</h1>
+  <div class="relato-meta">
+    <span class="badge badge-{{ relato.proveedor }}">{{ relato.proveedor }}</span>
+    {% if relato.modelo %}
+      <span class="meta-text">{{ relato.modelo }}</span>
+    {% endif %}
+    <span class="meta-text">{{ relato.creado_en.strftime('%d de %B de %Y, %H:%M') }}</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="relato-body">{{ relato.contenido }}</div>
+
+<div class="prompt-box">
+  <div class="prompt-label">Prompt original</div>
+  <div class="prompt-text">{{ relato.prompt }}</div>
+</div>
+
+<div class="actions">
+  <a href="{{ url_for('generar') }}" class="btn btn-primary">+ Nuevo relato</a>
+  <button class="btn btn-ghost" id="btn-delete-show">Eliminar</button>
+
+  <span class="confirm-delete" id="confirm-box">
+    <span style="font-size:.85rem; color:var(--muted);">¿Seguro?</span>
+    <form method="POST" action="{{ url_for('eliminar_relato', relato_id=relato.id) }}" style="display:inline;">
+      <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    </form>
+    <button class="btn btn-ghost" id="btn-cancel-delete">No</button>
+  </span>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('btn-delete-show').addEventListener('click', function() {
+    this.style.display = 'none';
+    document.getElementById('confirm-box').classList.add('visible');
+  });
+  document.getElementById('btn-cancel-delete').addEventListener('click', function() {
+    document.getElementById('confirm-box').classList.remove('visible');
+    document.getElementById('btn-delete-show').style.display = '';
+  });
+</script>
+{% endblock %}

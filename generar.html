@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Nuevo relato — Relatos IA{% endblock %}
+
+{% block extra_css %}
+<style>
+  .form-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; max-width: 640px; }
+  .proveedor-tabs { display: flex; gap: .5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab-btn { padding: .45rem 1rem; border-radius: var(--radius); border: 1px solid var(--border); background: transparent; font-family: 'DM Sans', sans-serif; font-size: .85rem; cursor: pointer; color: var(--muted); transition: all .15s; }
+  .tab-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .modelo-hint { font-size: .78rem; color: var(--muted); margin-top: .35rem; }
+  .actions { display: flex; gap: .75rem; align-items: center; margin-top: 1.75rem; }
+  .spinner { display: none; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .generating .spinner { display: block; }
+  .generating .btn-text { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Nuevo relato</h1>
+<p class="subtitle">Elige el proveedor, escribe tu prompt y deja que la IA haga el resto.</p>
+
+<div class="form-card">
+  <form method="POST" action="{{ url_for('generar') }}" id="form-generar">
+
+    <div class="form-group">
+      <label>Proveedor</label>
+      <div class="proveedor-tabs">
+        <button type="button" class="tab-btn active" data-proveedor="openrouter">OpenRouter</button>
+        <button type="button" class="tab-btn" data-proveedor="ollama">Ollama (local)</button>
+        <button type="button" class="tab-btn" data-proveedor="openwebui">Open WebUI</button>
+      </div>
+      <input type="hidden" name="proveedor" id="proveedor-input" value="openrouter" />
+    </div>
+
+    <div class="form-group">
+      <label for="modelo">Modelo</label>
+      <select name="modelo" id="modelo-select">
+        {% for m in modelos_por_proveedor['openrouter'] %}
+          <option value="{{ m }}">{{ m }}</option>
+        {% endfor %}
+      </select>
+      <p class="modelo-hint">Puedes escribir cualquier nombre de modelo directamente en el campo.</p>
+    </div>
+
+    <div class="form-group">
+      <label for="titulo">Título del relato</label>
+      <input type="text" name="titulo" id="titulo" placeholder="El último tren a Maspalomas…" required />
+    </div>
+
+    <div class="form-group">
+      <label for="prompt">Prompt / idea</label>
+      <textarea name="prompt" id="prompt" placeholder="Una pescadora canaria descubre que el océano guarda secretos que ningún mapa ha registrado…" rows="4" required></textarea>
+      <p class="hint">Cuanto más detallado, mejor será el relato.</p>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn btn-primary" id="btn-generar">
+        <span class="btn-text">Generar relato</span>
+        <span class="spinner"></span>
+      </button>
+      <a href="{{ url_for('index') }}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const modelos = {{ modelos_por_proveedor | tojson }};
+  const tabs    = document.querySelectorAll('.tab-btn');
+  const input   = document.getElementById('proveedor-input');
+  const select  = document.getElementById('modelo-select');
+
+  function setProveedor(prov) {
+    input.value = prov;
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.proveedor === prov));
+    const lista = modelos[prov] || [];
+    select.innerHTML = lista.map(m => `<option value="${m}">${m}</option>`).join('');
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => setProveedor(t.dataset.proveedor)));
+
+  // Permitir texto libre en select (convertirlo a input editable)
+  select.addEventListener('dblclick', () => {
+    const val = select.value;
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.name = 'modelo'; inp.value = val; inp.className = '';
+    inp.placeholder = 'nombre-del-modelo';
+    select.replaceWith(inp);
+    inp.focus();
+  });
+
+  // Spinner al enviar
+  document.getElementById('form-generar').addEventListener('submit', () => {
+    document.getElementById('btn-generar').classList.add('generating');
+  });
+</script>
+{% endblock %}

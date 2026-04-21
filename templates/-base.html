@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Relatos IA{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --ink:#1a1410; --paper:#f5f0e8; --cream:#ede7d9; --accent:#8b3a1e; --muted:#7a6e62; --card:#faf7f2; --border:rgba(26,20,16,.12); --radius:6px; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; }
+    nav { background: var(--ink); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .nav-brand { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.3rem; color: var(--paper); text-decoration: none; }
+    .nav-brand span { color: #c0785a; }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a { color: #c9bfb3; text-decoration: none; font-size: 0.85rem; letter-spacing: .04em; font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--paper); }
+    main { max-width: 860px; margin: 0 auto; padding: 3rem 1.5rem; }
+    .flash { padding: .75rem 1.25rem; border-radius: var(--radius); font-size: .9rem; margin-bottom: 1.5rem; }
+    .flash.error   { background: #fde8e2; color: #7a2010; border-left: 3px solid #c0452a; }
+    .flash.success { background: #e4f0e8; color: #1a4a28; border-left: 3px solid #3a8a58; }
+    .flash.info    { background: #e8eef8; color: #1a2a5a; border-left: 3px solid #3a5ab0; }
+    .btn { display: inline-block; padding: .6rem 1.4rem; border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: .875rem; font-weight: 500; cursor: pointer; text-decoration: none; border: none; transition: opacity .15s, transform .1s; }
+    .btn:hover { opacity: .88; }
+    .btn:active { transform: scale(.98); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-ghost   { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-danger  { background: transparent; color: #9a2010; border: 1px solid rgba(154,32,16,.3); }
+    label { display: block; font-size: .8rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+    input[type=text], textarea, select { width: 100%; padding: .65rem .9rem; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: .95rem; color: var(--ink); outline: none; transition: border-color .2s; }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 100px; }
+    .form-group { margin-bottom: 1.25rem; }
+    .hint { font-size: .78rem; color: var(--muted); margin-top: .35rem; }
+    h1 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; margin-bottom: .5rem; }
+    h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: .75rem; }
+    .subtitle { color: var(--muted); font-size: .95rem; margin-bottom: 2rem; }
+    footer { text-align: center; padding: 2.5rem 1rem; font-size: .78rem; color: var(--muted); border-top: 1px solid var(--border); margin-top: 4rem; }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <nav>
+    <a class="nav-brand" href="{{ url_for('index') }}">Relatos<span>IA</span></a>
+    <div class="nav-links">
+      <a href="{{ url_for('index') }}">Biblioteca</a>
+      <a href="{{ url_for('generar') }}">Nuevo relato</a>
+    </div>
+  </nav>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer>Relatos IA &middot; Santa Cruz de Tenerife &middot; 2026</footer>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}{% if cap %}Editar capítulo{% else %}Nuevo capítulo{% endif %} — {{ relato.titulo }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .form-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; max-width: 680px; }
+  .actions { display: flex; gap: .75rem; margin-top: 1.75rem; }
+  .cap-label { font-size: .78rem; color: var(--muted); margin-bottom: 1.5rem; }
+  textarea { min-height: 320px; font-family: 'Playfair Display', serif; font-style: italic; font-size: .98rem; line-height: 1.8; }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('humanos_ver', relato_id=relato.id) }}" class="btn btn-ghost" style="margin-bottom:1.5rem;padding:.4rem .9rem;font-size:.82rem;">← {{ relato.titulo }}</a>
+
+<h1>{% if cap %}Editar capítulo{% else %}Nuevo capítulo{% endif %}</h1>
+<p class="cap-label">
+  {% if cap %}
+    Capítulo {{ cap.orden }} de <em>{{ relato.titulo }}</em>
+  {% else %}
+    Capítulo {{ relato.capitulos|length + 1 }} de <em>{{ relato.titulo }}</em>
+  {% endif %}
+</p>
+
+<div class="form-card">
+  <form method="POST">
+    <div class="form-group">
+      <label for="titulo">Título del capítulo</label>
+      <input type="text" name="titulo" id="titulo" value="{{ cap.titulo if cap else '' }}" placeholder="El amanecer en la costa…" required />
+    </div>
+    <div class="form-group">
+      <label for="contenido">Contenido</label>
+      <textarea name="contenido" id="contenido" required>{{ cap.contenido if cap else '' }}</textarea>
+    </div>
+    <div class="actions">
+      <button type="submit" class="btn btn-primary">{% if cap %}Guardar cambios{% else %}Añadir capítulo{% endif %}</button>
+      <a href="{{ url_for('humanos_ver', relato_id=relato.id) }}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
