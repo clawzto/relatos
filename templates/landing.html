@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Bienvenido a Relatos IA{% endblock %}
+
+{% block content %}
+<style>
+    .hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 20px;
+        text-align: center;
+    }
+    .feature-box {
+        padding: 30px;
+        border-radius: 10px;
+        margin: 20px 0;
+        background: #f8f9fa;
+        border-left: 4px solid #667eea;
+    }
+    .relato-card {
+        margin: 15px 0;
+        padding: 20px;
+        border-radius: 8px;
+        background: white;
+        border: 1px solid #ddd;
+        transition: transform 0.2s;
+    }
+    .relato-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="hero">
+    <div class="container">
+        <h1 class="display-3 fw-bold mb-4">📚 Relatos IA</h1>
+        <p class="lead fs-5 mb-5">
+            Descubre historias generadas por IA y relatos de autores humanos.<br>
+            Gratuito para relatos generados. Acceso premium para obras exclusivas.
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{{ url_for('login') }}" class="btn btn-light btn-lg px-5 fw-bold">🔐 Iniciar Sesión</a>
+            <a href="{{ url_for('registro') }}" class="btn btn-outline-light btn-lg px-5 fw-bold">✍️ Crear Cuenta</a>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="mb-4">🎯 ¿Cómo funciona?</h2>
+            
+            <div class="feature-box">
+                <h4 class="text-primary">📖 Relatos IA - GRATIS</h4>
+                <p>Lee ilimitadamente relatos generados por inteligencia artificial. Perfecto para inspirarte y explorar historias nuevas cada día.</p>
+            </div>
+            
+            <div class="feature-box">
+                <h4 class="text-success">✨ Relatos de Autores - PREMIUM</h4>
+                <p>Accede a obras exclusivas escritas por autores humanos. Suscríbete para leer novelas completas, historias de genios creativos.</p>
+            </div>
+            
+            <div class="feature-box">
+                <h4 class="text-info">🔒 Lectura Segura Online</h4>
+                <p>Lee tus relatos premium directamente en la plataforma. Sin descargas, sin compartir. Tu acceso es personal y seguro.</p>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <h2 class="mb-4">📚 Últimos Relatos IA</h2>
+            
+            {% if relatos_ia %}
+                {% for relato in relatos_ia %}
+                    <div class="relato-card">
+                        <h5 class="text-primary">{{ relato.titulo }}</h5>
+                        <p class="small text-muted mb-2">
+                            <small>
+                                Generado con: <strong>{{ relato.modelo or 'IA' }}</strong>
+                                <br>
+                                {{ relato.creado_en.strftime('%d/%m/%Y') }}
+                            </small>
+                        </p>
+                        <p class="text-dark" style="font-size: 0.95rem;">
+                            {{ relato.contenido[:120] }}...
+                        </p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info">
+                    No hay relatos IA disponibles aún.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">❓ Preguntas Frecuentes</h2>
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <h5 class="text-primary">¿Cuánto cuesta?</h5>
+                <p>Los relatos IA son <strong>100% gratuitos</strong>. Los relatos de autores tienen precios variables según el autor y la extensión.</p>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <h5 class="text-primary">¿Puedo compartir mis relatos?</h5>
+                <p>No. Los relatos premium son exclusivamente para ti. El compartir accesos está prohibido en nuestros términos de servicio.</p>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <h5 class="text-primary">¿Puedo descargar los relatos?</h5>
+                <p>Relatos IA: sí. Relatos de autores: no. Para estos últimos tienes acceso de lectura online perpetua.</p>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <h5 class="text-primary">¿Cómo adquiero acceso a un relato?</h5>
+                <p>Crea tu cuenta, suscríbete y tendrás acceso instantáneo a todos los relatos de autores en nuestro catálogo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">¿Listo para empezar?</h2>
+        <p class="lead mb-4">Únete a nuestra comunidad de lectores y escritores</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{{ url_for('registro') }}" class="btn btn-light btn-lg px-5 fw-bold">Crear Cuenta Gratis</a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg px-5 fw-bold">Iniciar Sesión</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
