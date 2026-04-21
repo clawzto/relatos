@@ -23,11 +23,12 @@ from dotenv import load_dotenv
 from flask_login import LoginManager, current_user
 
 login_manager = LoginManager()
-login_manager.init_app(app)  # add_context_processor=True por defecto
+
 login_manager.login_view = 'login'
 load_dotenv()
 
 app = Flask(__name__)
+login_manager.init_app(app)  # add_context_processor=True por defecto
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'relatos-ia-2026-super-secreta')
 
 # Base de datos: PostgreSQL en Railway, SQLite localmente
