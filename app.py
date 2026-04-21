@@ -43,7 +43,10 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.login_message = 'Debes iniciar sesión para acceder a esta página.'
 login_manager.init_app(app)
-
+# 👇 AÑADE ESTO AQUÍ
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.query.get(int(user_id))
 # ──────────────────────────────────────────────
 # MODELOS — Usuarios
 # ──────────────────────────────────────────────
